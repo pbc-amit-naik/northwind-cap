@@ -28,6 +28,25 @@
       "auth": {
         "kind": "dummy"
       }
+    },
+    "features": {
+      "serve_on_root": true
+    },
+    "odata": {
+      "flavors": {
+        "NorthwindService": {
+          "open_paths": [
+            "/$metadata"
+          ]
+        }
+      }
+    },
+    "env": {
+      "requires": {
+        "auth": {
+          "kind": "dummy"
+        }
+      }
     }
   }
 }

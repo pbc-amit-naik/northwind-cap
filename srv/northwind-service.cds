@@ -14,14 +14,17 @@ service NorthwindService @(path: '/odata/v4/northwind') {
     UnitPrice,
     UnitsInStock,
     Discontinued,
-    virtual StockStatus : String
+    virtual StockStatus : String,
+    Category : Association to Categories on Category.CategoryID = CategoryID,
+    Supplier : Association to Suppliers   on Supplier.SupplierID = SupplierID
   }
 
   // Categories
   @readonly entity Categories as projection on Northwind.Categories {
     CategoryID,
     CategoryName,
-    Description
+    Description,
+    Products : Association to many Products on Products.CategoryID = CategoryID
   }
 
   // Customers — address fields excluded
@@ -34,19 +37,21 @@ service NorthwindService @(path: '/odata/v4/northwind') {
     Phone
   }
 
-  // Orders — default page size 50
+// Orders — default page size 50
   @readonly
   @cds.query.limit.default: 50
   entity Orders as projection on Northwind.Orders {
     OrderID,
     CustomerID,
-    EmployeeID,
+    EmployeeID,  // FK to Employees — navigation not exposed
     OrderDate,
     RequiredDate,
     ShippedDate,
     ShipCountry,
     Freight,
-    virtual OrderStatus : String
+    virtual OrderStatus : String,
+    Customer : Association to Customers on Customer.CustomerID = CustomerID,
+    Details  : Association to many Order_Details on Details.OrderID = OrderID
   }
 
   // Order Details
@@ -56,7 +61,8 @@ service NorthwindService @(path: '/odata/v4/northwind') {
     UnitPrice,
     Quantity,
     Discount,
-    virtual LineTotal : Decimal
+    virtual LineTotal : Decimal,
+    Product : Association to Products on Product.ProductID = ProductID
   }
 
   // Suppliers — address fields excluded
@@ -65,6 +71,22 @@ service NorthwindService @(path: '/odata/v4/northwind') {
     CompanyName,
     ContactName,
     Country,
-    Phone
+    Phone,
+    Products : Association to many Products on Products.SupplierID = SupplierID
   }
+
+// Diagnostics — NorthwindAdmin only
+  @requires: 'northwind.admin'
+  @readonly entity Diagnostics {
+    key service     : String;
+        version     : String;
+        northwindUrl: String;
+        timestamp   : String;
+        status      : String;
+  }
+
+// Employees — intentionally not exposed in v1
+  //   entity Employees as projection on Northwind.Employees {
+  //     EmployeeID, FirstName, LastName, Title, City, Country
+  //   }
 }
