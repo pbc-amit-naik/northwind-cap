@@ -1,0 +1,45 @@
+{
+  "xsappname": "northwind-cap",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.northwind.view",
+      "description": "Read access to all NorthwindService entity sets"
+    },
+    {
+      "name": "$XSAPPNAME.northwind.admin",
+      "description": "Full read access including metadata and diagnostics"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "NorthwindViewer",
+      "description": "Read all exposed entities",
+      "scope-references": [
+        "$XSAPPNAME.northwind.view"
+      ]
+    },
+    {
+      "name": "NorthwindAdmin",
+      "description": "Read access including metadata and diagnostics",
+      "scope-references": [
+        "$XSAPPNAME.northwind.view",
+        "$XSAPPNAME.northwind.admin"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "NorthwindViewer",
+      "role-template-references": [
+        "$XSAPPNAME.NorthwindViewer"
+      ]
+    },
+    {
+      "name": "NorthwindAdmin",
+      "role-template-references": [
+        "$XSAPPNAME.NorthwindAdmin"
+      ]
+    }
+  ]
+}

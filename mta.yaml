@@ -1,0 +1,61 @@
+_schema-version: "3.1"
+ID: northwind-cap
+description: Northwind OData CAP Service
+version: 1.0.0
+
+modules:
+  - name: northwind-srv
+    type: nodejs
+    path: .
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 512M
+      disk-quota: 512M
+    properties:
+      NODE_ENV: production
+      CDS_FEATURES_ASSERT_INTEGRITY: false
+      NORTHWIND_URL: https://services.odata.org/V4/Northwind/Northwind.svc
+    requires:
+      - name: northwind-xsuaa
+    provides:
+      - name: northwind-srv-api
+        properties:
+          srv-url: ${default-url}
+
+  - name: northwind-app-deployer
+    type: com.sap.application.content
+    path: app
+    requires:
+      - name: northwind-html5-repo
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: .
+      requires:
+        - artifacts:
+            - .
+          name: northwind-app-deployer
+          target-path: .
+
+resources:
+  - name: northwind-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: northwind-cap
+        tenant-mode: dedicated
+
+  - name: northwind-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+
+  - name: northwind-html5-repo
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host

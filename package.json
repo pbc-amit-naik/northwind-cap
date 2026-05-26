@@ -1,0 +1,33 @@
+{
+  "name": "northwind-cap",
+  "version": "1.0.0",
+  "description": "Northwind OData CAP Service",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@sap/cds": "^9"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^9"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch"
+  },
+  "cds": {
+    "requires": {
+      "Northwind": {
+        "kind": "odata-v4",
+        "model": "srv/external/Northwind",
+        "credentials": {
+          "url": "https://services.odata.org/V4/Northwind/Northwind.svc",
+          "authentication": "NoAuthentication"
+        }
+      },
+      "auth": {
+        "kind": "dummy"
+      }
+    }
+  }
+}
